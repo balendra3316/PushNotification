@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from 'react';
+import { requestPermission, onMessageListener } from './firebase';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    useEffect(() => {
+        // Listen for incoming messages
+        onMessageListener()
+            .then((payload) => {
+                console.log('Notification received:', payload);
+                alert(`Notification: ${payload.notification.title}`);
+            })
+            .catch((err) => console.error('Error listening for messages:', err));
+    }, []);
+
+    const handleEnableNotifications = () => {
+        requestPermission();
+    };
+
+    return (
+        <div style={{ textAlign: 'center', padding: '20px' }}>
+            <h1>React PWA with Push Notifications</h1>
+            <button onClick={handleEnableNotifications} style={{ padding: '10px 20px', fontSize: '16px' }}>
+                Enable Notifications
+            </button>
+        </div>
+    );
 }
 
 export default App;
